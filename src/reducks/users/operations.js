@@ -23,7 +23,6 @@ export const listenAuthState = () => {
               })
             );
 
-            dispatch(push("/"));
           });
       } else {
         dispatch(push("/signin"));
