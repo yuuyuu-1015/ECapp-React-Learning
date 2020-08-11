@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import IconButton from "@material-ui/core/IconButton";
 import AddPhotoAlternateIcon from "@material-ui/icons/AddPhotoAlternate";
 import { makeStyles } from "@material-ui/styles";
-import { storage } from "../../firebase/index.js";
+import { storage } from "../../firebase/index";
 import ImagePreview from "./ImagePreview"
 
 const useStyles = makeStyles({
@@ -54,8 +54,8 @@ const ImageArea = (props) => {
           <label htmlFor="">
             <AddPhotoAlternateIcon />
             <input
-              type="file"
               className="u-display-none"
+              type="file"
               id="image"
               onChange={(event) => uploadImage(event)}
             />
