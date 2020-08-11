@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
+import { storage } from "../../firebase/index";
+import { makeStyles } from "@material-ui/styles";
 import IconButton from "@material-ui/core/IconButton";
 import AddPhotoAlternateIcon from "@material-ui/icons/AddPhotoAlternate";
-import { makeStyles } from "@material-ui/styles";
-import { storage } from "../../firebase/index";
 import ImagePreview from "./ImagePreview"
 
 const useStyles = makeStyles({
@@ -34,7 +34,7 @@ const ImageArea = (props) => {
         //Handle successful uploads on complete
         uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
           const newImage = { id: fileName, path: downloadURL };
-          props.setImages((prevState) => [...prevState, newImage]);
+          props.setImages((prevState => [...prevState, newImage]));
         });
       });
     },
