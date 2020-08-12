@@ -1,17 +1,25 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { PrimaryButton, TextInput, SelectBox } from "../components/UIkit";
 import { saveProduct } from "../reducks/products/operations";
 import { useDispatch } from "react-redux";
 import ImageArea from "../components/Products/ImageArea";
+import { db } from "../firebase/index"
+import SetSizeArea from "../components/Products/SetSizeArea";
 
 const ProductEdit = () => {
   const dispatch = useDispatch();
+  let id = window.location.pathname.split('/product/edit')[1]
+
+  if (id !== "") {
+    id = id.split('/')[1]
+  }
 
   const [name, setName] = useState(""),
     [description, setDescription] = useState(""),
     [category, setCategory] = useState(""),
     [gender, setGender] = useState(""),
     [images, setImages] = useState([]),
+    [sizes, setSizes] = useState([]),
     [price, setPrice] = useState("");
 
   const inputName = useCallback(
@@ -52,6 +60,22 @@ const ProductEdit = () => {
     { id: "tops", name: "トップス" },
     { id: "shirts", name: "シャツ" },
   ];
+
+  useEffect(() => {
+    if (id !== "") {
+      db.collection('products').doc(id).get()
+        .then(snapshot => {
+          const data = snapshot.data()
+          setImages(data.images)
+          setName(data.name)
+          setDescription(data.description)
+          setCategory(data.category)
+          setGender(data.gender)
+          setPrice(data.price)
+          setSizes(data.sizes)
+        })
+    }
+  }, [])
 
   return (
     <section>
@@ -103,12 +127,14 @@ const ProductEdit = () => {
           type={"number"}
         />
         <div className="module-spacer--medium" />
+        <SetSizeArea sizes={sizes} setSizes={setSizes} />
+        <div className="module-spacer--medium" />
         <div className="center">
           <PrimaryButton
             label={"商品情報を保存"}
             onClick={() =>
               dispatch(
-                saveProduct(name, description, category, gender, price, images)
+                saveProduct(id, name, description, category, gender, price, images, sizes)
               )
             }
           />
