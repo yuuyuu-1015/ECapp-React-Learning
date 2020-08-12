@@ -71,7 +71,7 @@ const ImageArea = (props) => {
       <div className="u-text-right">
         <span>商品画像を登録する</span>
         <IconButton className={classes.icon}>
-          <label htmlFor="">
+          <label>
             <AddPhotoAlternateIcon />
             <input
               className="u-display-none"
