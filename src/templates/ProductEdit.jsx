@@ -1,26 +1,24 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { PrimaryButton, TextInput, SelectBox } from "../components/UIkit";
-import { saveProduct } from "../reducks/products/operations";
-import { useDispatch } from "react-redux";
-import ImageArea from "../components/Products/ImageArea";
 import { db } from "../firebase/index"
-import SetSizeArea from "../components/Products/SetSizeArea";
+import { PrimaryButton, TextInput, SelectBox } from "../components/UIkit";
+import { useDispatch } from "react-redux";
+import { saveProduct } from "../reducks/products/operations";
+import { ImageArea, SetSizeArea } from "../components/Products";
 
 const ProductEdit = () => {
   const dispatch = useDispatch();
   let id = window.location.pathname.split('/product/edit')[1]
-
   if (id !== "") {
     id = id.split('/')[1]
   }
 
   const [name, setName] = useState(""),
     [description, setDescription] = useState(""),
+    [images, setImages] = useState([]),
     [category, setCategory] = useState(""),
     [gender, setGender] = useState(""),
-    [images, setImages] = useState([]),
-    [sizes, setSizes] = useState([]),
-    [price, setPrice] = useState("");
+    [price, setPrice] = useState(""),
+    [sizes, setSizes] = useState([]);
 
   const inputName = useCallback(
     (event) => {
@@ -34,13 +32,6 @@ const ProductEdit = () => {
       setDescription(event.target.value);
     },
     [setDescription]
-  );
-
-  const inputCategory = useCallback(
-    (event) => {
-      setCategory(event.target.value);
-    },
-    [setCategory]
   );
 
   const inputPrice = useCallback(
@@ -65,17 +56,17 @@ const ProductEdit = () => {
     if (id !== "") {
       db.collection('products').doc(id).get()
         .then(snapshot => {
-          const data = snapshot.data()
-          setImages(data.images)
-          setName(data.name)
-          setDescription(data.description)
-          setCategory(data.category)
-          setGender(data.gender)
-          setPrice(data.price)
-          setSizes(data.sizes)
+          const product = snapshot.data()
+          setName(product.name)
+          setDescription(product.description)
+          setImages(product.images)
+          setCategory(product.category)
+          setGender(product.gender)
+          setPrice(product.price)
+          setSizes(product.sizes)
         })
     }
-  }, [])
+  }, [id])
 
   return (
     <section>

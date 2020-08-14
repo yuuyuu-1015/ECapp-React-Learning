@@ -11,7 +11,7 @@ import IconButton from '@material-ui/core/IconButton'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
-import {deleteProduct} from '../../reducks/products/operations'
+import { deleteProduct } from '../../reducks/products/operations'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -85,7 +85,7 @@ const ProductCard = (props) => {
                 >
                     <MenuItem
                         onClick={() => {
-                            dispatch(push('/product/edit' + props.id))
+                            dispatch(push('/product/edit/' + props.id))
                             handleClose()
                         }}
                     >編集する</MenuItem>

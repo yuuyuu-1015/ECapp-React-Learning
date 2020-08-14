@@ -1,4 +1,4 @@
-const initialState = {
+export const initialState = {
   products: {
     list: []
   },
@@ -10,4 +10,3 @@ const initialState = {
   },
 };
 
-export default initialState;
