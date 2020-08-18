@@ -1,6 +1,7 @@
-import { db, FirebaseTimestamp } from "../../firebase";
+import { db, FirebaseTimestamp } from '../../firebase/index';
 import { push } from "connected-react-router";
-import { deleteProductsAction, fetchProductsAction } from './actions'
+import { deleteProductsAction, fetchProductsAction } from "./actions"
+// import { hideLoadingAction, showLoadingAction } from "../loading/actions";
 
 
 const productsRef = db.collection("products");
@@ -27,6 +28,88 @@ export const fetchProducts = () => {
         })
         dispatch(fetchProductsAction(productList))
       })
+  }
+}
+
+export const orderProduct = (productsInCart, price) => {
+  return async (dispatch, getState) => {
+    // dispatch(showLoadingAction('決済処理中・・・'))
+
+    const uid = getState().users.uid
+    const userRef = db.collection('users').doc(uid)
+    const timestamp = FirebaseTimestamp.now()
+
+    let products = [],
+      soldOutProducts = []
+
+    const batch = db.batch()
+
+    for (const product of productsInCart) {
+      const snapshot = await productsRef.doc(product.productId).get()
+      const sizes = snapshot.data().sizes
+
+      const updateSizes = sizes.map(size => {
+        if (size.size === product.size) {
+          if (size.quantity === 0) {
+            soldOutProducts.push(product.name)
+            return size
+          }
+          return {
+            size: size.size,
+            quantity: size.quantity - 1
+          }
+        } else {
+          return size
+        }
+      })
+
+      products.push = ({
+        id: product.productId,
+        images: product.images,
+        name: product.name,
+        price: product.price,
+        size: product.size
+      });
+
+      batch.update(
+        productsRef.doc(product.productId),
+        { sizes: updateSizes }
+      )
+
+      batch.delete(
+        userRef.collection('cart').doc(product.cartId)
+      )
+    }
+
+    if (soldOutProducts.length > 0) {
+      const errorMessage = (soldOutProducts.length > 1) ? soldOutProducts.join('と') : soldOutProducts[0]
+      alert('大変申し訳ないでござんす。' + errorMessage + 'が在庫切れとなったため、注文処理を中断したでござんす')
+      return false
+    } else {
+      batch.commit()
+        .then(() => {
+          const orderRef = userRef.collection('orders').doc()
+          const date = timestamp.toDate()
+
+          const shippingDate = FirebaseTimestamp.fromDate(new Date(date.setDate(date.getDate() + 3)))
+
+          const history = {
+            amount: price,
+            created_at: timestamp,
+            id: orderRef.id,
+            products: products,
+            shipping_date: shippingDate,
+            updated_at: timestamp
+          }
+
+          orderRef.set(history)
+
+          // dispatch(hideLoadingAction())
+          dispatch(push('/order/complete'))
+        }).catch(() => {
+          alert('注文処理失敗しました。通信環境をご確認でござんす。')
+        })
+    }
   }
 }
 
