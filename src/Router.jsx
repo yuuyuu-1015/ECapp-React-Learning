@@ -1,6 +1,18 @@
 import React from "react";
 import { Switch, Route } from "react-router";
-import { SignIn, SignUp, Reset, ProductDetail, ProductEdit, ProductList, CartList, OrderConfirm, OrderHistory } from "./templates";
+import {
+  SignIn,
+  SignUp,
+  Reset,
+  ProductDetail,
+  ProductEdit,
+  ProductList,
+  CartList,
+  OrderConfirm,
+  OrderHistory,
+  UserMyPage,
+  CheckoutWrapper
+} from "./templates";
 import Auth from "./Auth";
 
 const Router = () => {
@@ -17,6 +29,9 @@ const Router = () => {
         <Route exact path="/cart" component={CartList} />
         <Route exact path="/order/confirm" component={OrderConfirm} />
         <Route exact path="/order/history" component={OrderHistory} />
+
+        <Route exact path="/user/mypage" component={UserMyPage} />
+        <Route exact path="/user/payment/edit" component={CheckoutWrapper} />
       </Auth>
     </Switch>
   );
